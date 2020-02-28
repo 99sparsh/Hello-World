@@ -100,9 +100,10 @@
         android:layout_width="212dp"
         android:layout_height="36dp"
         android:background="@drawable/buttons"
+        android:onClick="SignUp"
         android:text="Sign Up"
-        android:textColor="#FFFFFF"
 
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.402"
@@ -114,6 +115,7 @@
         android:id="@+id/imageView"
         android:layout_width="177dp"
         android:layout_height="166dp"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.453"
@@ -121,4 +123,5 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.164"
         app:srcCompat="@drawable/helloworldlogo" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
