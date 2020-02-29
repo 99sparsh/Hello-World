@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
@@ -37,11 +38,25 @@ public class MainActivity extends AppCompatActivity {
     private EditText dobet;
     private FirebaseAuth auth;
     private FirebaseFirestore db;
+    private FirebaseUser user;
 
     public void pickdate(View view) {
         new MyEditTextDatePicker(this, R.id.editText5, R.style.DatePickerTheme);
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        user = auth.getCurrentUser();
+        if(user!=null)
+            navigate_to_dashboard(user);
+    }
+    public void navigate_to_dashboard(FirebaseUser user){
+        Intent I = new Intent(this,DashboardActivity.class);
+        I.putExtra("username",user.getDisplayName());
+        I.putExtra("email",user.getEmail());
+        startActivity(I);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

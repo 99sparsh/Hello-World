@@ -78,4 +78,16 @@
         android:onClick="login"
         android:text="LOGIN"
         android:textColor="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="198dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button3"
+        android:layout_alignLeft="@id/button3"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:onClick="navigate_to_signup"
+        android:text="Not a member yet? Register" />
+
 </android.widget.RelativeLayout>
