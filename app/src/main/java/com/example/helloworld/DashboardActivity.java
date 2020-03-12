@@ -39,7 +39,10 @@ public class DashboardActivity extends AppCompatActivity {
 
     private long UPDATE_INTERVAL = 1 * 1000;  /* 10 secs */
 
-
+    @Override
+    public void onBackPressed() {
+        this.moveTaskToBack(true);
+    }
 
 
     @Override
