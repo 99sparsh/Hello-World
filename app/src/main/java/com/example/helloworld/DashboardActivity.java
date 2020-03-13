@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.IntentSender;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -25,6 +23,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -33,11 +35,10 @@ public class DashboardActivity extends AppCompatActivity {
     private TextView user;
     private String username;
     private FirebaseUser fUser;
-    private double latitude = 0.0;
-    private double longitude = 0.0;
+    private FirebaseFirestore db;
     private LocationRequest mLocationRequest;
 
-    private long UPDATE_INTERVAL = 1 * 1000;  /* 10 secs */
+    private long UPDATE_INTERVAL = 600 * 1000;  /* 10 secs */
 
     @Override
     public void onBackPressed() {
@@ -50,8 +51,21 @@ public class DashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         user = findViewById(R.id.user_name);
+        db = FirebaseFirestore.getInstance();
         startLocationUpdates();
     }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        fUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(fUser==null)
+            navigate_to_login();
+        Intent i=getIntent();
+        username = i.getStringExtra("username");
+        user.setText(username);
+    }
+
     protected void startLocationUpdates() {
 
         // Create the location request to start receiving updates
@@ -85,7 +99,13 @@ public class DashboardActivity extends AppCompatActivity {
         String msg = "Updated Location: " +
                 Double.toString(location.getLatitude()) + "," +
                 Double.toString(location.getLongitude());
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        Map<String,Object> loc = new HashMap<String,Object>();
+        loc.put("latitude",location.getLatitude());
+        loc.put("longitude",location.getLongitude());
+        db.collection("users") //update Firestore
+                .document(fUser.getUid())
+                .update("location",loc);
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show(); //remove later
         Log.e("LOC",msg);
 
     }
@@ -114,16 +134,7 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    public void onResume(){
-        super.onResume();
-        fUser = FirebaseAuth.getInstance().getCurrentUser();
-        if(fUser==null)
-            navigate_to_login();
-        Intent i=getIntent();
-        username = i.getStringExtra("username");
-        user.setText(username);
-    }
+
 
     public void navigate_to_login() {
         Intent i = new Intent(this, LoginActivity.class);
