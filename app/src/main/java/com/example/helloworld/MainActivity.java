@@ -1,16 +1,23 @@
 package com.example.helloworld;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
-
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -39,9 +46,54 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseFirestore db;
     private FirebaseUser user;
+    private AlertDialog alertDialog;
 
     public void pickdate(View view) {
         new MyEditTextDatePicker(this, R.id.editText5, R.style.DatePickerTheme);
+    }
+    public void okClicked(View view){
+        alertDialog.dismiss();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    public void locationPermission(){
+        boolean permissionAccessFineLocationApproved =
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED;
+        if(permissionAccessFineLocationApproved){
+            boolean backgroundLocationPermissionApproved =
+                    ActivityCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED;
+            if(backgroundLocationPermissionApproved){
+                Log.e("LOC","APPROVED");
+            }
+            else{
+                //Request for permission
+                ActivityCompat.requestPermissions(this, new String[] {
+                        Manifest.permission.ACCESS_BACKGROUND_LOCATION},1);
+            }
+        } else {
+            // App doesn't have access to the device's location at all. Make full request
+            // for permission
+            ActivityCompat.requestPermissions(this, new String[] {
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                    }, 1);
+
+        }
+
+        if(ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            ViewGroup viewGroup = findViewById(android.R.id.content);
+            View dialogView = LayoutInflater.from(this).inflate(R.layout.permission_dialog, viewGroup, false);
+            builder.setView(dialogView);
+            alertDialog = builder.create();
+            alertDialog.show();
+        }
+
     }
 
     @Override
@@ -58,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(I);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         dobet = findViewById(R.id.editText5);
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        locationPermission();
     }
 
     public void SignUp(View view){

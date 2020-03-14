@@ -25,8 +25,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Date;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -38,7 +40,7 @@ public class DashboardActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private LocationRequest mLocationRequest;
 
-    private long UPDATE_INTERVAL = 600 * 1000;  /* 10 secs */
+    private long UPDATE_INTERVAL = 600 * 1000;  /* 10 minutes */
 
     @Override
     public void onBackPressed() {
@@ -50,7 +52,7 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-        user = findViewById(R.id.user_name);
+
         db = FirebaseFirestore.getInstance();
         startLocationUpdates();
     }
@@ -63,6 +65,7 @@ public class DashboardActivity extends AppCompatActivity {
             navigate_to_login();
         Intent i=getIntent();
         username = i.getStringExtra("username");
+        user = findViewById(R.id.user_name);
         user.setText(username);
     }
 
@@ -95,19 +98,16 @@ public class DashboardActivity extends AppCompatActivity {
                 Looper.myLooper());
     }
     public void onLocationChanged(Location location) {
-        // New location has now been determined
-        String msg = "Updated Location: " +
-                Double.toString(location.getLatitude()) + "," +
-                Double.toString(location.getLongitude());
+        //Location has now been determined
         Map<String,Object> loc = new HashMap<String,Object>();
+        Date date = new Date();
         loc.put("latitude",location.getLatitude());
         loc.put("longitude",location.getLongitude());
+        loc.put("UpdatedAt",(new Timestamp(date.getTime())).toString());
         db.collection("users") //update Firestore
                 .document(fUser.getUid())
                 .update("location",loc);
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show(); //remove later
-        Log.e("LOC",msg);
-
+        Toast.makeText(this, "Updated location", Toast.LENGTH_SHORT).show(); //remove later
     }
 
     public void getLastLocation() {

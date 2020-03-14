@@ -63,8 +63,6 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-
-                                Log.d("LOGIN", "signInWithEmail:success");
                                 FirebaseUser user = auth.getCurrentUser();
                                 updateUI(user);
                                 Toast.makeText(getApplicationContext(), "Login Successful!", Toast.LENGTH_SHORT).show();
