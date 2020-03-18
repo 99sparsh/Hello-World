@@ -146,4 +146,14 @@ public class DashboardActivity extends AppCompatActivity {
         Intent i = new Intent(this,LoginActivity.class);
         startActivity(i);
     }
+
+    public void profile(View view){
+        Intent i = new Intent(this,ProfileUpdateActivity.class);
+        startActivity(i);
+    }
+
+    public void trial(View view){
+        Intent i = new Intent(this,Trial.class);
+        startActivity(i);
+    }
 }
