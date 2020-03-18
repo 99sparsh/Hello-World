@@ -146,4 +146,8 @@ public class DashboardActivity extends AppCompatActivity {
         Intent i = new Intent(this,LoginActivity.class);
         startActivity(i);
     }
+
+    public void navigate_to_posts(View view) {
+        startActivity(new Intent(DashboardActivity.this,PostsActivity.class));
+    }
 }
