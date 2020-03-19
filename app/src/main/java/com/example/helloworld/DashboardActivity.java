@@ -9,9 +9,11 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -39,7 +41,7 @@ public class DashboardActivity extends AppCompatActivity {
     private FirebaseUser fUser;
     private FirebaseFirestore db;
     private LocationRequest mLocationRequest;
-
+    ImageView img;
     private long UPDATE_INTERVAL = 600 * 1000;  /* 10 minutes */
 
     @Override
@@ -67,6 +69,14 @@ public class DashboardActivity extends AppCompatActivity {
         username = i.getStringExtra("username");
         user = findViewById(R.id.user_name);
         user.setText(username);
+        img=(ImageView)findViewById(R.id.user_photo) ;
+        if(fUser!=null)
+        {
+            if(fUser.getPhotoUrl()!=null)
+            {
+                Glide.with(this).load(fUser.getPhotoUrl()).into(img);
+            }
+        }
     }
 
     protected void startLocationUpdates() {
@@ -149,11 +159,8 @@ public class DashboardActivity extends AppCompatActivity {
 
     public void profile(View view){
         Intent i = new Intent(this,ProfileUpdateActivity.class);
+        //i.putExtra("fUser",""+fUser);
         startActivity(i);
     }
 
-    public void trial(View view){
-        Intent i = new Intent(this,Trial.class);
-        startActivity(i);
-    }
 }
