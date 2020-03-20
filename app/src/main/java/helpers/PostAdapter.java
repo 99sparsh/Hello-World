@@ -1,27 +1,20 @@
 package helpers;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+
 
 import androidx.annotation.NonNull;
-import androidx.collection.LruCache;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.helloworld.PostsActivity;
 import com.example.helloworld.R;
 
-import java.net.URL;
 import java.util.ArrayList;
 
 public class PostAdapter extends RecyclerView.Adapter<PostHolder> {
@@ -60,6 +53,5 @@ public class PostAdapter extends RecyclerView.Adapter<PostHolder> {
         Log.e("AdapterSIZE",posts.size()+"");
         return posts.size();
     }
-
 
 }

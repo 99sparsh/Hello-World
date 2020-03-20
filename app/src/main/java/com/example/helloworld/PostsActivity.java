@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,19 +30,17 @@ public class PostsActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private final String TAG = "PostsActivity";
     ArrayList<Post> gposts= new ArrayList<Post>();
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_posts);
+        progressBar = findViewById(R.id.progress_loader);
         db = FirebaseFirestore.getInstance();
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
-
         fetchPosts();
-
     }
     private void fetchPosts(){
 
@@ -66,6 +66,7 @@ public class PostsActivity extends AppCompatActivity {
     }
 
     private void getPostList(ArrayList<Post> p){
+        progressBar.setVisibility(View.INVISIBLE);
         gposts = (ArrayList<Post>)p.clone();
         postAdapter = new PostAdapter(this,gposts);
         recyclerView.setAdapter(postAdapter);
