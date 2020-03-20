@@ -9,9 +9,12 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -19,10 +22,14 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.sql.Timestamp;
@@ -39,7 +46,7 @@ public class DashboardActivity extends AppCompatActivity {
     private FirebaseUser fUser;
     private FirebaseFirestore db;
     private LocationRequest mLocationRequest;
-
+    ImageView img;
     private long UPDATE_INTERVAL = 600 * 1000;  /* 10 minutes */
 
     @Override
@@ -66,7 +73,34 @@ public class DashboardActivity extends AppCompatActivity {
         Log.e("NAME", fUser.getDisplayName());
         username = fUser.getDisplayName();
         user = findViewById(R.id.user_name);
+
+        DocumentReference doc = db.collection("users").document(fUser.getUid());
+        doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()){
+                        username = document.getString("name");
+                    }
+                    else{
+                        Log.d("fetchName","No data");
+                    }
+                }
+                else{
+                    Log.d("fetchname","get failed with", task.getException());
+                }
+            }
+        });
         user.setText(username);
+        img=(ImageView)findViewById(R.id.user_photo) ;
+        if(fUser!=null)
+        {
+            if(fUser.getPhotoUrl()!=null)
+            {
+                Glide.with(this).load(fUser.getPhotoUrl()).apply(RequestOptions.circleCropTransform()).into(img);
+            }
+        }
     }
 
     protected void startLocationUpdates() {
@@ -147,7 +181,15 @@ public class DashboardActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    public void profile(View view){
+        Intent i = new Intent(this,ProfileUpdateActivity.class);
+        //i.putExtra("fUser",""+fUser);
+        startActivity(i);
+    }
+
+
     public void navigate_to_posts(View view) {
         startActivity(new Intent(DashboardActivity.this,PostsActivity.class));
     }
+
 }
