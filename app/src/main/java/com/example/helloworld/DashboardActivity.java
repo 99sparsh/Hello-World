@@ -70,28 +70,9 @@ public class DashboardActivity extends AppCompatActivity {
         fUser = FirebaseAuth.getInstance().getCurrentUser();
         if(fUser==null)
             navigate_to_login();
-        Log.e("NAME", fUser.getDisplayName());
+
         username = fUser.getDisplayName();
         user = findViewById(R.id.user_name);
-
-        DocumentReference doc = db.collection("users").document(fUser.getUid());
-        doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    DocumentSnapshot document = task.getResult();
-                    if(document.exists()){
-                        username = document.getString("name");
-                    }
-                    else{
-                        Log.d("fetchName","No data");
-                    }
-                }
-                else{
-                    Log.d("fetchname","get failed with", task.getException());
-                }
-            }
-        });
         user.setText(username);
         img=(ImageView)findViewById(R.id.user_photo) ;
         if(fUser!=null)
