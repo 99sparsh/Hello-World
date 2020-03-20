@@ -70,8 +70,8 @@ public class DashboardActivity extends AppCompatActivity {
         fUser = FirebaseAuth.getInstance().getCurrentUser();
         if(fUser==null)
             navigate_to_login();
-        Intent i=getIntent();
-        username = i.getStringExtra("username");
+        Log.e("NAME", fUser.getDisplayName());
+        username = fUser.getDisplayName();
         user = findViewById(R.id.user_name);
 
         DocumentReference doc = db.collection("users").document(fUser.getUid());

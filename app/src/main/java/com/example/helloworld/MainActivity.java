@@ -27,6 +27,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
@@ -158,6 +159,8 @@ public class MainActivity extends AppCompatActivity {
                             }
                             else {
                                 String uid = auth.getCurrentUser().getUid();
+                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(name).build();
+                                auth.getCurrentUser().updateProfile(profileUpdates);
                                 Map<String,Object>user = new HashMap<String,Object>();
                                 user.put("name",name);
                                 user.put("email",email);
