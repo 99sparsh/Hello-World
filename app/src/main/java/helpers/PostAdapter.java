@@ -15,6 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.collection.LruCache;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.helloworld.PostsActivity;
 import com.example.helloworld.R;
 
@@ -44,9 +47,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostHolder> {
         holder.title.setText(posts.get(position).getTitle());
         holder.desc.setText(posts.get(position).getDescription());
         //loadBitmap(position,holder.dp);
-
-       // new GetImages().execute(posts.get(position).getDp());
-        holder.dp.setImageResource(R.drawable.ic_photo_user);
+        Glide.with(holder.dp.getContext())
+                .load(posts.get(position).getDp())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .apply(RequestOptions.circleCropTransform())
+                .into(holder.dp);
     }
 
     @Override
