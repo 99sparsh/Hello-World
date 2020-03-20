@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -24,18 +25,25 @@ import android.webkit.MimeTypeMap;
 import android.webkit.WebChromeClient;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Registry;
 import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.module.AppGlideModule;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -51,8 +59,10 @@ import java.time.temporal.TemporalField;
 
 public class ProfileUpdateActivity extends AppCompatActivity {
     private static final int PERMISSION_CODE = 100;
+    private FirebaseFirestore db;
     Button gallery,camera;
     ImageView img;
+    TextView name;
     Uri imguri;
     private StorageReference mStorageRef;
     private FirebaseUser fUser;
@@ -61,8 +71,10 @@ public class ProfileUpdateActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = FirebaseFirestore.getInstance();
         setContentView(R.layout.activity_profile_update);
         img=(ImageView)findViewById(R.id.imgview) ;
+        name=(TextView)findViewById(R.id.textView6) ;
         mStorageRef = FirebaseStorage.getInstance().getReference("images/profilepictures");
 
         FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
@@ -70,12 +82,13 @@ public class ProfileUpdateActivity extends AppCompatActivity {
         {
             if(user.getPhotoUrl()!=null)
             {
-                Glide.with(this).load(user.getPhotoUrl()).into(img);
+                Glide.with(this).load(user.getPhotoUrl()).apply(RequestOptions.circleCropTransform()).into(img);
             }
         }
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         //Toast.makeText(this, "Hi", Toast.LENGTH_SHORT).show();
@@ -86,17 +99,29 @@ public class ProfileUpdateActivity extends AppCompatActivity {
             switch(resultCode) {
                 case RESULT_OK:
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                img.setImageBitmap(bitmap);
+                //img.setImageBitmap(bitmap);
+                //part not working yet
+                if(bitmap.getHeight()>bitmap.getWidth()) {
+//                    Matrix matrix = new Matrix();
+//                    matrix.postRotate(90);
+//
+//                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), true);
+//
+//                    Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+//                    bitmap=rotatedBitmap;
+                    bitmap.setHeight(bitmap.getWidth());
+                }
                 Fileuploader(bitmap);
+                onResume();
 
             }
         }
         else if(requestCode==SELECT_IMAGE_CODE)
         {
-            Toast.makeText(this, "Atleast here", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Atleast here", Toast.LENGTH_SHORT).show();
             switch(resultCode) {
                 case RESULT_OK:
-                    img.setImageURI(data.getData());
+                    //img.setImageURI(data.getData());
                     Uri imageUri = data.getData();
                     try {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
@@ -104,10 +129,11 @@ public class ProfileUpdateActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
+                onResume();
             }
         }
     }
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void Fileuploader(Bitmap bitmap)
     {
         String uid=FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -125,6 +151,7 @@ public class ProfileUpdateActivity extends AppCompatActivity {
 
             }
         });
+        onResume();
     }
     private void getDownloadUrl(StorageReference Reference)
     {
@@ -143,10 +170,22 @@ public class ProfileUpdateActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Void aVoid) {
                 Toast.makeText(ProfileUpdateActivity.this, "Profile picture Updated successfully", Toast.LENGTH_SHORT).show();
+                load_photo();
             }
         });
     }
-    public void Choose(View v)
+    public void load_photo()
+    {
+        FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
+        if(user!=null)
+        {
+            if(user.getPhotoUrl()!=null)
+            {
+                Glide.with(this).load(user.getPhotoUrl()).apply(RequestOptions.circleCropTransform()).into(img);
+            }
+        }
+    }
+    public void choose(View v)
     {
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M)
         {
@@ -187,6 +226,32 @@ public class ProfileUpdateActivity extends AppCompatActivity {
     public void onResume()
     {
         super.onResume();
+        FirebaseUser fUser=FirebaseAuth.getInstance().getCurrentUser();
+        DocumentReference doc = db.collection("users").document(fUser.getUid());
+        doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()){
+                        name.setText(document.getString("name"));
+                    }
+                    else{
+                        Log.d("fetchName","No data");
+                    }
+                }
+                else{
+                    Log.d("fetchname","get failed with", task.getException());
+                }
+            }
+        });
+        if(fUser!=null)
+        {
+            if(fUser.getPhotoUrl()!=null)
+            {
+                Glide.with(this).load(fUser.getPhotoUrl()).apply(RequestOptions.circleCropTransform()).into(img);
+            }
+        }
     }
     public void onRequestPermissionResult(int requestCode, @NonNull String [] permissions, @NonNull int [] grantResults){
         switch(requestCode){
@@ -201,7 +266,10 @@ public class ProfileUpdateActivity extends AppCompatActivity {
                 }
         }
     }
-
+    public void navigate_to_dashboard(View view){
+        Intent i = new Intent(this,DashboardActivity.class);
+        startActivity(i);
+    }
  }
 
 
