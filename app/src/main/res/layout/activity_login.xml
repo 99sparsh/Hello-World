@@ -65,19 +65,19 @@
         android:inputType="textEmailAddress"
         android:textColorHint="#B3B2B2" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/button3"
-        android:layout_width="286dp"
-        android:layout_height="32dp"
+        android:layout_width="287dp"
+        android:layout_height="42dp"
         android:layout_below="@id/editText7"
         android:layout_alignStart="@id/editText7"
         android:layout_alignLeft="@id/editText7"
         android:layout_marginLeft="-3dp"
         android:layout_marginTop="30dp"
-        android:background="@drawable/buttons"
         android:onClick="login"
         android:text="LOGIN"
-        android:textColor="#FFFFFF" />
+        android:textColor="#FFFFFF"
+        app:cornerRadius="16dp" />
 
     <TextView
         android:id="@+id/textView4"

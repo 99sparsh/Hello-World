@@ -49,14 +49,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/button4"
         android:layout_width="330dp"
-        android:layout_height="37dp"
+        android:layout_height="42dp"
         android:layout_marginTop="41dp"
-        android:background="@drawable/buttons"
-        android:text="Post"
+        android:text="@string/post"
         android:textColor="#FFFFFF"
+        android:onClick="makePost"
+        app:cornerRadius="16dp"
         app:layout_constraintBottom_toTopOf="@+id/recyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.493"

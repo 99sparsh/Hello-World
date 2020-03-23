@@ -1,15 +1,15 @@
 package com.example.helloworld;
 
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -18,7 +18,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import helpers.Post;
 import helpers.PostAdapter;
@@ -31,6 +30,7 @@ public class PostsActivity extends AppCompatActivity {
     private final String TAG = "PostsActivity";
     ArrayList<Post> gposts= new ArrayList<Post>();
     private ProgressBar progressBar;
+    private EditText post;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +39,7 @@ public class PostsActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_loader);
         db = FirebaseFirestore.getInstance();
         recyclerView = findViewById(R.id.recyclerView);
+        post = findViewById(R.id.editText8);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         fetchPosts();
     }
@@ -74,4 +75,8 @@ public class PostsActivity extends AppCompatActivity {
         Log.e(TAG+"gposts ",gposts.size()+"");
     }
 
+    public void makePost(View view) {
+        String content = post.getText().toString();
+
+    }
 }

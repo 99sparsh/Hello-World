@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private AlertDialog alertDialog;
 
     public void pickdate(View view) {
-        new MyEditTextDatePicker(this, R.id.editText5, R.style.DatePickerTheme);
+        new MyEditTextDatePicker(this, R.id.editText5);
     }
     public void okClicked(View view){
         alertDialog.dismiss();

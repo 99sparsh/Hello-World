@@ -17,14 +17,12 @@ public class MyEditTextDatePicker  implements View.OnClickListener, DatePickerDi
     private int _month;
     private int _birthYear;
     private Context _context;
-    private int _theme;
-    public MyEditTextDatePicker(Context context, int editTextViewID, int _theme)
+    public MyEditTextDatePicker(Context context, int editTextViewID)
     {
         Activity act = (Activity)context;
         this._editText = (EditText)act.findViewById(editTextViewID);
         this._editText.setOnClickListener(this);
         this._context = context;
-        this._theme=_theme;
 
     }
 
@@ -39,7 +37,7 @@ public class MyEditTextDatePicker  implements View.OnClickListener, DatePickerDi
     public void onClick(View v) {
         Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
 
-        DatePickerDialog dialog = new DatePickerDialog(_context, _theme, this,
+        DatePickerDialog dialog = new DatePickerDialog(_context,  this,
                 calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH));
         dialog.show();
