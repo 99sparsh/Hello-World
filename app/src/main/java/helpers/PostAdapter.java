@@ -37,9 +37,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull PostHolder holder, int position) {
-        holder.title.setText(posts.get(position).getTitle());
-        holder.desc.setText(posts.get(position).getDescription());
-        //loadBitmap(position,holder.dp);
+        holder.title.setText(posts.get(position).getUser());
+        holder.desc.setText(posts.get(position).getContent());
         Glide.with(holder.dp.getContext())
                 .load(posts.get(position).getDp())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -49,8 +48,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostHolder> {
 
     @Override
     public int getItemCount() {
-
-        Log.e("AdapterSIZE",posts.size()+"");
         return posts.size();
     }
 

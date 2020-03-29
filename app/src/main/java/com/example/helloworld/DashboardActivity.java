@@ -44,6 +44,16 @@ public class DashboardActivity extends AppCompatActivity {
     private LocationRequest mLocationRequest;
     ImageView img;
     private long UPDATE_INTERVAL = 600 * 1000;  /* 10 minutes */
+    private static double latitude;
+    private static double longitude;
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
 
     @Override
     public void onBackPressed() {
@@ -112,6 +122,8 @@ public class DashboardActivity extends AppCompatActivity {
         //Location has now been determined
         Map<String,Object> loc = new HashMap<String,Object>();
         Date date = new Date();
+        latitude=location.getLatitude();
+        longitude=location.getLongitude();
         loc.put("latitude",location.getLatitude());
         loc.put("longitude",location.getLongitude());
         loc.put("UpdatedAt",(new Timestamp(date.getTime())).toString());
@@ -120,32 +132,6 @@ public class DashboardActivity extends AppCompatActivity {
                 .update("location",loc);
         Toast.makeText(this, "Updated location", Toast.LENGTH_SHORT).show(); //remove later
     }
-
-    public void getLastLocation() {
-        // Get last known recent location using new Google Play Services SDK (v11+)
-        FusedLocationProviderClient locationClient = getFusedLocationProviderClient(this);
-
-        locationClient.getLastLocation()
-                .addOnSuccessListener(new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // GPS location can be null if GPS is switched off
-                        if (location != null) {
-                            onLocationChanged(location);
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("DASHBOARD_ACTIVITY", "Error trying to get last GPS location");
-                        e.printStackTrace();
-                    }
-                });
-    }
-
-
-
 
     public void navigate_to_login() {
         Intent i = new Intent(this, LoginActivity.class);
