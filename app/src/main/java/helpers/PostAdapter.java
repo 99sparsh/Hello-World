@@ -1,6 +1,7 @@
 package helpers;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,11 +40,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostHolder> {
     public void onBindViewHolder(@NonNull PostHolder holder, int position) {
         holder.title.setText(posts.get(position).getUser());
         holder.desc.setText(posts.get(position).getContent());
-        Glide.with(holder.dp.getContext())
-                .load(posts.get(position).getDp())
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .apply(RequestOptions.circleCropTransform())
-                .into(holder.dp);
+        if(TextUtils.isEmpty(posts.get(position).getDp())){
+            Glide.with(holder.dp.getContext())
+                    .load(R.drawable.ic_photo_user)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(holder.dp);
+        }
+         else {
+            Glide.with(holder.dp.getContext())
+                    .load(posts.get(position).getDp())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(holder.dp);
+        }
     }
 
     @Override

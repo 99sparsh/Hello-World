@@ -1,6 +1,6 @@
 package com.example.helloworld;
 
-import android.os.AsyncTask;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -108,19 +107,25 @@ public class PostsActivity extends AppCompatActivity {
         while(mat.find())
             interests.add(mat.group(1));
         Date date = new Date();
+        Uri url = fuser.getPhotoUrl();
+        String urlString;
+        if(url==null)
+            urlString="";
+        else
+            urlString=url.toString();
         postData.put("user",fuser.getDisplayName());
         postData.put("uid",fuser.getUid());
         postData.put("content",content);
         postData.put("interests",interests);
         postData.put("latitude", new DashboardActivity().getLatitude());
         postData.put("longitude", new DashboardActivity().getLongitude());
-        postData.put("dp", fuser.getPhotoUrl().toString());
+        postData.put("dp", urlString);
         postData.put("timestamp",(new Timestamp(date.getTime())).toString());
         Log.d(TAG,Arrays.asList(postData).toString());
         progressBar.setVisibility(View.VISIBLE);
         makePost(postData);
         post.setText("");
-        Post newPost = new Post(fuser.getDisplayName(), fuser.getPhotoUrl().toString(), content, postData.get("timestamp").toString(),
+        Post newPost = new Post(fuser.getDisplayName(), urlString, content, postData.get("timestamp").toString(),
                 fuser.getUid(), (Double)postData.get("latitude"), (Double)postData.get("longitude"),interests);
         gposts.add(0,newPost);
         postAdapter.notifyItemChanged(0);

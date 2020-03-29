@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseUser user;
     private AlertDialog alertDialog;
-
     public void pickdate(View view) {
         new MyEditTextDatePicker(this, R.id.editText5);
     }
@@ -102,14 +101,12 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         user = auth.getCurrentUser();
         if(user!=null)
-            navigate_to_dashboard(user);
+            navigateToDashboard();
     }
-    public void navigate_to_dashboard(FirebaseUser user){
-        Intent I = new Intent(this,DashboardActivity.class);
-        I.putExtra("username",user.getDisplayName());
-        I.putExtra("email",user.getEmail());
-        startActivity(I);
+    public void navigateToDashboard(){
+        startActivity(new Intent(this,DashboardActivity.class));
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
@@ -181,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
                                         });
 
                                 Toast.makeText(getApplicationContext(), "User successfully registered!", Toast.LENGTH_SHORT).show();
+                                navigateToDashboard();
                             }
                         }
                     });
@@ -192,4 +190,5 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
+
 }
