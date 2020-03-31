@@ -50,17 +50,23 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button2"
-        android:layout_width="65dp"
-        android:layout_height="53dp"
+        android:id="@+id/button7"
+        android:layout_width="91dp"
+        android:layout_height="55dp"
         android:background="#03A9F4"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
         android:onClick="navigate_to_dashboard"
         android:selectAllOnFocus="true"
-        android:shadowColor="#FFFFFF"
+        android:shadowColor="#03A9F4"
+        android:shadowDx="0"
+        android:shadowDy="0"
         android:soundEffectsEnabled="true"
         android:text="Back"
         android:textColor="#FFFFFF"
         android:visibility="visible"
+        app:backgroundTint="#03A9F4"
+        app:elevation="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

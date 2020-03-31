@@ -31,10 +31,13 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import helpers.MyEditTextDatePicker;
+import helpers.Post;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -176,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
                                                 Log.w("user write", "Error writing document", e);
                                             }
                                         });
-
+                                add_interests_field();
                                 Toast.makeText(getApplicationContext(), "User successfully registered!", Toast.LENGTH_SHORT).show();
                                 navigateToDashboard();
                             }
@@ -184,6 +187,15 @@ public class MainActivity extends AppCompatActivity {
                     });
         }
 
+    }
+    public void add_interests_field()
+    {
+        List<String> interests = new ArrayList<>();
+        interests.add("Nothing");
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        db.collection("users") //update Firestore
+                .document(fUser.getUid())
+                .update("interests",interests);
     }
 
     public void SignIn(View view){

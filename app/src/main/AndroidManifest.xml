@@ -27,9 +27,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-
+        <activity android:name=".InterestsActivity"></activity>
         <activity android:name=".ProfileUpdateActivity" />
-
         <activity android:name=".PostsActivity" />
         <activity android:name=".DashboardActivity" />
         <activity android:name=".LoginActivity" />
