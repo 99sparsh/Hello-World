@@ -31,10 +31,14 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import helpers.MyEditTextDatePicker;
+import helpers.Post;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -48,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseUser user;
     private AlertDialog alertDialog;
-
     public void pickdate(View view) {
         new MyEditTextDatePicker(this, R.id.editText5);
     }
@@ -102,14 +105,12 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         user = auth.getCurrentUser();
         if(user!=null)
-            navigate_to_dashboard(user);
+            navigateToDashboard();
     }
-    public void navigate_to_dashboard(FirebaseUser user){
-        Intent I = new Intent(this,DashboardActivity.class);
-        I.putExtra("username",user.getDisplayName());
-        I.putExtra("email",user.getEmail());
-        startActivity(I);
+    public void navigateToDashboard(){
+        startActivity(new Intent(this,DashboardActivity.class));
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
@@ -165,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
                                 user.put("name",name);
                                 user.put("email",email);
                                 user.put("dob",dob);
+                                user.put("interests", Arrays.asList("coffee","movie")); //default interests
                                 db.collection("users").document(uid)
                                         .set(user)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -179,17 +181,17 @@ public class MainActivity extends AppCompatActivity {
                                                 Log.w("user write", "Error writing document", e);
                                             }
                                         });
-
                                 Toast.makeText(getApplicationContext(), "User successfully registered!", Toast.LENGTH_SHORT).show();
+                                navigateToDashboard();
                             }
                         }
                     });
         }
 
     }
-
     public void SignIn(View view){
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
+
 }

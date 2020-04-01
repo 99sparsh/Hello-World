@@ -155,4 +155,9 @@ public class DashboardActivity extends AppCompatActivity {
         startActivity(new Intent(DashboardActivity.this,PostsActivity.class));
     }
 
+    public void interests(View view){
+        Intent i = new Intent(this,InterestsActivity.class);
+        startActivity(i);
+    }
+
 }

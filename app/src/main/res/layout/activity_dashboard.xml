@@ -70,6 +70,7 @@
             android:layout_marginRight="16dp"
             android:layout_marginBottom="16dp"
             android:background="@color/cardColor"
+            android:onClick="interests"
             app:cardCornerRadius="8dp"
             app:cardElevation="6dp">
 
