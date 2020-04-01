@@ -1,7 +1,8 @@
 package com.example.helloworld;
 
-import android.os.AsyncTask;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -21,15 +22,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,6 +69,7 @@ public class PostsActivity extends AppCompatActivity {
     private void fetchPosts(){
 
         db.collection("posts")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -100,33 +100,34 @@ public class PostsActivity extends AppCompatActivity {
     public void makePost(View view) {
         HashMap<String,Object> postData = new HashMap<String,Object>();
         String content = post.getText().toString();
+        if(TextUtils.isEmpty(content)){
+            Toast.makeText(this,"Post can't be empty!",Toast.LENGTH_SHORT).show();
+            return;
+        }
         Pattern hashtag = Pattern.compile("#(\\S+)");
         Matcher mat = hashtag.matcher(content);
         ArrayList<String> interests = new ArrayList<String>();
         while(mat.find())
             interests.add(mat.group(1));
         Date date = new Date();
-        postData.put("user",fuser.getDisplayName());
-        postData.put("uid",fuser.getUid());
-        postData.put("content",content);
-        postData.put("interests",interests);
-        postData.put("latitude", new DashboardActivity().getLatitude());
-        postData.put("longitude", new DashboardActivity().getLongitude());
-        postData.put("dp", fuser.getPhotoUrl().toString());
-        postData.put("timestamp",(new Timestamp(date.getTime())).toString());
-        Log.d(TAG,Arrays.asList(postData).toString());
+        Uri url = fuser.getPhotoUrl();
+        String urlString;
+        if(url==null)
+            urlString="";
+        else
+            urlString=url.toString();
+        DashboardActivity loc = new DashboardActivity();
+        Post newPost = new Post(fuser.getDisplayName(), urlString, content, postData.get("timestamp").toString(),
+                fuser.getUid(), loc.getLatitude() , loc.getLongitude() ,interests);
         progressBar.setVisibility(View.VISIBLE);
-        makePost(postData);
+        makePost(newPost);
         post.setText("");
-        Post newPost = new Post(fuser.getDisplayName(), fuser.getPhotoUrl().toString(), content, postData.get("timestamp").toString(),
-                fuser.getUid(), (Double)postData.get("latitude"), (Double)postData.get("longitude"),interests);
         gposts.add(0,newPost);
         postAdapter.notifyItemChanged(0);
         progressBar.setVisibility(View.INVISIBLE);
     }
 
-        public void makePost(HashMap post) {
-            final boolean[] success = new boolean[1];
+        public void makePost(Post post) {
             db.collection("posts")
                     .add(post)
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
