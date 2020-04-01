@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 
 import helpers.Post;
 import helpers.PostAdapter;
+import helpers.Stemmer;
 
 public class PostsActivity extends AppCompatActivity {
 
@@ -46,6 +47,7 @@ public class PostsActivity extends AppCompatActivity {
     private EditText post;
     private FirebaseUser fuser;
     private FirebaseAuth auth;
+    private Stemmer s;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,7 @@ public class PostsActivity extends AppCompatActivity {
         post = findViewById(R.id.editText8);
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        s = new Stemmer();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         fetchPosts();
     }
@@ -88,6 +91,16 @@ public class PostsActivity extends AppCompatActivity {
                     }
                 });
     }
+    public String findRoot(String input)
+    {
+        int n=input.length();
+        if(input.charAt(n-1)==input.charAt(n-2))
+            return input;
+        for(int i=0; i<n; i++)
+            s.add(input.charAt(i));
+        s.stem();
+        return s.toString();
+    }
 
     private void getPostList(ArrayList<Post> p){
         progressBar.setVisibility(View.INVISIBLE);
@@ -108,7 +121,7 @@ public class PostsActivity extends AppCompatActivity {
         Matcher mat = hashtag.matcher(content);
         ArrayList<String> interests = new ArrayList<String>();
         while(mat.find())
-            interests.add(mat.group(1));
+            interests.add(findRoot(mat.group(1)));
         Date date = new Date();
         Uri url = fuser.getPhotoUrl();
         String urlString;
