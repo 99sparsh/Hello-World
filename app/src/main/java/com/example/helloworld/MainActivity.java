@@ -32,6 +32,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -165,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
                                 user.put("name",name);
                                 user.put("email",email);
                                 user.put("dob",dob);
+                                user.put("interests", Arrays.asList("coffee","movie")); //default interests
                                 db.collection("users").document(uid)
                                         .set(user)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -179,7 +181,6 @@ public class MainActivity extends AppCompatActivity {
                                                 Log.w("user write", "Error writing document", e);
                                             }
                                         });
-                                add_interests_field();
                                 Toast.makeText(getApplicationContext(), "User successfully registered!", Toast.LENGTH_SHORT).show();
                                 navigateToDashboard();
                             }
@@ -188,16 +189,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-    public void add_interests_field()
-    {
-        List<String> interests = new ArrayList<>();
-        interests.add("Nothing");
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        db.collection("users") //update Firestore
-                .document(fUser.getUid())
-                .update("interests",interests);
-    }
-
     public void SignIn(View view){
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);

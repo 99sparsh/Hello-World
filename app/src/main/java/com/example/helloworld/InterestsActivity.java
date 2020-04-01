@@ -1,15 +1,13 @@
 package com.example.helloworld;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -21,8 +19,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import helpers.Stemmer;
 
 public class InterestsActivity extends AppCompatActivity {
     private FirebaseFirestore db;
@@ -31,6 +30,7 @@ public class InterestsActivity extends AppCompatActivity {
     Chip single_chip;
     ChipGroup chipGroup;
     List<String> interests;
+    Stemmer s;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +38,7 @@ public class InterestsActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         fUser = FirebaseAuth.getInstance().getCurrentUser();
         load_interests(true);
+        s = new Stemmer();
         //display_chips();
         //cant call here sync problems
     }
@@ -116,12 +117,18 @@ public class InterestsActivity extends AppCompatActivity {
     }
     public String findRoot(String input)
     {
-        return input;
+        int n=input.length();
+        if(input.charAt(n-1)==input.charAt(n-2))
+            return input;
+        for(int i=0; i<n; i++)
+            s.add(input.charAt(i));
+        s.stem();
+        return s.toString();
     }
     public void add_interest(View view) {
         load_interests(false);
         EditText editText= findViewById(R.id.editText9);
-        String interest=findRoot(editText.getText().toString());
+        String interest=findRoot(editText.getText().toString().toLowerCase());
         interests.add(interest);
         db.collection("users") //update Firestore
                 .document(fUser.getUid())

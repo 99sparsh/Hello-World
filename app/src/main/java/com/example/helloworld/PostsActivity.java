@@ -2,6 +2,7 @@ package com.example.helloworld;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -25,9 +26,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -101,6 +100,10 @@ public class PostsActivity extends AppCompatActivity {
     public void makePost(View view) {
         HashMap<String,Object> postData = new HashMap<String,Object>();
         String content = post.getText().toString();
+        if(TextUtils.isEmpty(content)){
+            Toast.makeText(this,"Post can't be empty!",Toast.LENGTH_SHORT).show();
+            return;
+        }
         Pattern hashtag = Pattern.compile("#(\\S+)");
         Matcher mat = hashtag.matcher(content);
         ArrayList<String> interests = new ArrayList<String>();
@@ -113,27 +116,18 @@ public class PostsActivity extends AppCompatActivity {
             urlString="";
         else
             urlString=url.toString();
-        postData.put("user",fuser.getDisplayName());
-        postData.put("uid",fuser.getUid());
-        postData.put("content",content);
-        postData.put("interests",interests);
-        postData.put("latitude", new DashboardActivity().getLatitude());
-        postData.put("longitude", new DashboardActivity().getLongitude());
-        postData.put("dp", urlString);
-        postData.put("timestamp",(new Timestamp(date.getTime())).toString());
-        Log.d(TAG,Arrays.asList(postData).toString());
-        progressBar.setVisibility(View.VISIBLE);
-        makePost(postData);
-        post.setText("");
+        DashboardActivity loc = new DashboardActivity();
         Post newPost = new Post(fuser.getDisplayName(), urlString, content, postData.get("timestamp").toString(),
-                fuser.getUid(), (Double)postData.get("latitude"), (Double)postData.get("longitude"),interests);
+                fuser.getUid(), loc.getLatitude() , loc.getLongitude() ,interests);
+        progressBar.setVisibility(View.VISIBLE);
+        makePost(newPost);
+        post.setText("");
         gposts.add(0,newPost);
         postAdapter.notifyItemChanged(0);
         progressBar.setVisibility(View.INVISIBLE);
     }
 
-        public void makePost(HashMap post) {
-            final boolean[] success = new boolean[1];
+        public void makePost(Post post) {
             db.collection("posts")
                     .add(post)
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
