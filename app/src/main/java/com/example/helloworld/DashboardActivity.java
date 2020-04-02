@@ -62,16 +62,17 @@ public class DashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard);
 
         db = FirebaseFirestore.getInstance();
-        startLocationUpdates();
     }
 
     @Override
     public void onResume(){
         super.onResume();
         fUser = FirebaseAuth.getInstance().getCurrentUser();
-        if(fUser==null)
+        if(fUser==null) {
             navigate_to_login();
-
+            return;
+        }
+        startLocationUpdates();
         username = fUser.getDisplayName();
         user = findViewById(R.id.user_name);
         user.setText(username);
@@ -134,9 +135,12 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     public void logout(View view){
+        db.collection("users")
+                .document(fUser.getUid())
+                .update("FCM_Token","");
         FirebaseAuth.getInstance().signOut();
-        Intent i = new Intent(this,LoginActivity.class);
-        startActivity(i);
+        startActivity(new Intent(this,LoginActivity.class));
+
     }
 
     public void profile(View view){
