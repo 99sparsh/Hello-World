@@ -1,11 +1,5 @@
 package com.example.helloworld;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,6 +13,12 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -29,16 +29,14 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import helpers.MyEditTextDatePicker;
-import helpers.Post;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -52,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseUser user;
     private AlertDialog alertDialog;
+    private final String TAG = "MainActivity";
     public void pickdate(View view) {
         new MyEditTextDatePicker(this, R.id.editText5);
     }
@@ -105,9 +104,26 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         user = auth.getCurrentUser();
         if(user!=null)
-            navigateToDashboard();
+            getFCMTokenAndRedirect();
     }
-    public void navigateToDashboard(){
+    public void getFCMTokenAndRedirect(){
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if(!task.isSuccessful()){
+                            Log.w(TAG,task.getException());
+                            return;
+                        }
+                        if(task.getResult()!=null) {
+                            String token = task.getResult().getToken();
+                            user = auth.getCurrentUser();
+                            db.collection("users")
+                                    .document(user.getUid())
+                                    .update("FCM_Token", token);
+                        }
+                    }
+                });
         startActivity(new Intent(this,DashboardActivity.class));
     }
 
@@ -182,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         });
                                 Toast.makeText(getApplicationContext(), "User successfully registered!", Toast.LENGTH_SHORT).show();
-                                navigateToDashboard();
+                                getFCMTokenAndRedirect();
                             }
                         }
                     });
