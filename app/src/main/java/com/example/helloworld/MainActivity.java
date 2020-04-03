@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void SignUp(View view){
-        final String name = nameet.getText().toString();
+        final String name = nameet.getText().toString()+" ";
         final String email = emailet.getText().toString();
         final String pass = passet.getText().toString();
         final String pass2 = pass2et.getText().toString();
