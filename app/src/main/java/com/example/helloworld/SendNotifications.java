@@ -12,7 +12,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 public class SendNotifications extends AsyncTask<ArrayList, Void, Void> {
@@ -42,8 +44,10 @@ public class SendNotifications extends AsyncTask<ArrayList, Void, Void> {
                                 notif.put("tokens",FCMtokens);
                                 notif.put("subtext","New post!");
                                 notif.put("title","New activity nearby!");
-                                String msg = Name.substring(0,Name.indexOf(' ')) + " is up to something you are interested in";
+                                String msg = Name.substring(0,Name.indexOf(' ')) + " is up to something you are interested in!";
                                 notif.put("body",msg);
+                                Date date = new Date();
+                                notif.put("timestamp",(new Timestamp(date.getTime())).toString());
                                 db.collection("notifications")
                                         .document("current")
                                         .update(notif);
