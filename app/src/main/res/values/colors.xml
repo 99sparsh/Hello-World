@@ -5,4 +5,5 @@
     <color name="colorAccent">#D81B60</color>
     <color name="cardColor">#ffffff</color>
     <color name="textcardColor">#3f3f3f</color>
+    <color name="appblue">#4abdbd</color>
 </resources>

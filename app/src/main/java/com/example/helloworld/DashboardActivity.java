@@ -126,7 +126,7 @@ public class DashboardActivity extends AppCompatActivity {
         db.collection("users") //update Firestore
                 .document(fUser.getUid())
                 .update("location",loc);
-        Toast.makeText(this, "Updated location", Toast.LENGTH_SHORT).show(); //remove later
+       // Toast.makeText(this, "Updated location", Toast.LENGTH_SHORT).show(); //remove later
     }
 
     public void navigate_to_login() {
