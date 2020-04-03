@@ -26,7 +26,9 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -130,7 +132,7 @@ public class PostsActivity extends AppCompatActivity {
         else
             urlString=url.toString();
         DashboardActivity loc = new DashboardActivity();
-        Post newPost = new Post(fuser.getDisplayName(), urlString, content, postData.get("timestamp").toString(),
+        Post newPost = new Post(fuser.getDisplayName(), urlString, content, (new Timestamp(date.getTime())).toString(),
                 fuser.getUid(), loc.getLatitude() , loc.getLongitude() ,interests);
         progressBar.setVisibility(View.VISIBLE);
         makePost(newPost);
@@ -157,5 +159,8 @@ public class PostsActivity extends AppCompatActivity {
                             Log.w(TAG, "Error adding post", e);
                         }
                     });
+            ArrayList<String> name  = new ArrayList<String>();
+            name.add(fuser.getDisplayName());
+            new SendNotifications().execute(post.getInterests(),name);
         }
 }
