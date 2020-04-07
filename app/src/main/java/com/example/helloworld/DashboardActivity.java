@@ -1,5 +1,6 @@
 package com.example.helloworld;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -160,6 +161,6 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     public void message_menu(View view) {
-        startActivity(new Intent(DashboardActivity.this,PostsActivity.class));
+        startActivity(new Intent(DashboardActivity.this,FrontActivity.class));
     }
 }

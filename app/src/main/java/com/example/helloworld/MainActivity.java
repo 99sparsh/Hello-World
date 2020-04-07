@@ -111,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this,DashboardActivity.class));
     }
 
+    //com.google.firebase.auth.FirebaseAuthWeakPasswordException:
+    // The given password is invalid. [ Password should be at least 6 characters ]
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
