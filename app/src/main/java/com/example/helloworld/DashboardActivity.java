@@ -159,4 +159,7 @@ public class DashboardActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    public void message_menu(View view) {
+        startActivity(new Intent(DashboardActivity.this,PostsActivity.class));
+    }
 }
