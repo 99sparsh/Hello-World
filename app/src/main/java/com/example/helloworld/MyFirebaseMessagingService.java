@@ -26,17 +26,17 @@ import java.util.Map;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
-    public void onNewToken(String token){
+    public void onNewToken(String token) {
         super.onNewToken(token);
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser fuser = auth.getCurrentUser();
-        if(fuser!=null)
-            updateTokenOnServer(token,fuser.getUid());
-        Log.d("token ",token);
+        if (fuser != null)
+            updateTokenOnServer(token, fuser.getUid());
+        Log.d("token ", token);
     }
 
     @Override
-    public void onMessageReceived(RemoteMessage remoteMessage){
+    public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         Map<String, String> data = remoteMessage.getData();
@@ -89,10 +89,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         notificationManager.notify(0, notificationBuilder.build());
     }
 
-    public void updateTokenOnServer(String token, String uid){
+    public void updateTokenOnServer(String token, String uid) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("users")
                 .document(uid)
-                .update("FCM_Token",token);
+                .update("FCM_Token", token);
     }
 }

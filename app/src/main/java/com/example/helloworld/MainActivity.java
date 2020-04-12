@@ -51,44 +51,45 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseUser user;
     private AlertDialog alertDialog;
     private final String TAG = "MainActivity";
+
     public void pickdate(View view) {
         new MyEditTextDatePicker(this, R.id.editText5);
     }
-    public void okClicked(View view){
+
+    public void okClicked(View view) {
         alertDialog.dismiss();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
-    public void locationPermission(){
+    public void locationPermission() {
         boolean permissionAccessFineLocationApproved =
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED;
-        if(permissionAccessFineLocationApproved){
+                        == PackageManager.PERMISSION_GRANTED;
+        if (permissionAccessFineLocationApproved) {
             boolean backgroundLocationPermissionApproved =
                     ActivityCompat.checkSelfPermission(this,
                             Manifest.permission.ACCESS_BACKGROUND_LOCATION)
                             == PackageManager.PERMISSION_GRANTED;
-            if(backgroundLocationPermissionApproved){
-                Log.e("LOC","APPROVED");
-            }
-            else{
+            if (backgroundLocationPermissionApproved) {
+                Log.e("LOC", "APPROVED");
+            } else {
                 //Request for permission
-                ActivityCompat.requestPermissions(this, new String[] {
-                        Manifest.permission.ACCESS_BACKGROUND_LOCATION},1);
+                ActivityCompat.requestPermissions(this, new String[]{
+                        Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 1);
             }
         } else {
             // App doesn't have access to the device's location at all. Make full request
             // for permission
-            ActivityCompat.requestPermissions(this, new String[] {
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                    }, 1);
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            }, 1);
 
         }
 
-        if(ActivityCompat.checkSelfPermission(this,
+        if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED){
+                != PackageManager.PERMISSION_GRANTED) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             ViewGroup viewGroup = findViewById(android.R.id.content);
             View dialogView = LayoutInflater.from(this).inflate(R.layout.permission_dialog, viewGroup, false);
@@ -100,22 +101,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         user = auth.getCurrentUser();
-        if(user!=null)
+        if (user != null)
             getFCMTokenAndRedirect();
     }
-    public void getFCMTokenAndRedirect(){
+
+    public void getFCMTokenAndRedirect() {
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
                     public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if(!task.isSuccessful()){
-                            Log.w(TAG,task.getException());
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, task.getException());
                             return;
                         }
-                        if(task.getResult()!=null) {
+                        if (task.getResult() != null) {
                             String token = task.getResult().getToken();
                             user = auth.getCurrentUser();
                             db.collection("users")
@@ -124,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-        startActivity(new Intent(this,DashboardActivity.class));
+        startActivity(new Intent(this, DashboardActivity.class));
     }
 
 
@@ -143,53 +145,52 @@ public class MainActivity extends AppCompatActivity {
         locationPermission();
     }
 
-    public void SignUp(View view){
-        final String name = nameet.getText().toString()+" ";
+    public void SignUp(View view) {
+        final String name = nameet.getText().toString() + " ";
         final String email = emailet.getText().toString();
         final String pass = passet.getText().toString();
         final String pass2 = pass2et.getText().toString();
         final String dob = dobet.getText().toString();
-        if(TextUtils.isEmpty(name))
-            Toast.makeText(this,"Please enter name", Toast.LENGTH_SHORT).show();
-        else if(TextUtils.isEmpty(email))
-            Toast.makeText(this,"Please enter email", Toast.LENGTH_SHORT).show();
-        else if(TextUtils.isEmpty(pass))
-            Toast.makeText(this,"Please enter password", Toast.LENGTH_SHORT).show();
-        else if(TextUtils.isEmpty(pass2))
-            Toast.makeText(this,"Please confirm password", Toast.LENGTH_SHORT).show();
-        else if(TextUtils.isEmpty(dob))
-            Toast.makeText(this,"Please enter birthday", Toast.LENGTH_SHORT).show();
-        else if(pass.compareTo(pass2)!=0)
-            Toast.makeText(this,"Passwords do not match", Toast.LENGTH_SHORT).show();
-        else{
-            auth.createUserWithEmailAndPassword(email,pass)
+        if (TextUtils.isEmpty(name))
+            Toast.makeText(this, "Please enter name", Toast.LENGTH_SHORT).show();
+        else if (TextUtils.isEmpty(email))
+            Toast.makeText(this, "Please enter email", Toast.LENGTH_SHORT).show();
+        else if (TextUtils.isEmpty(pass))
+            Toast.makeText(this, "Please enter password", Toast.LENGTH_SHORT).show();
+        else if (TextUtils.isEmpty(pass2))
+            Toast.makeText(this, "Please confirm password", Toast.LENGTH_SHORT).show();
+        else if (TextUtils.isEmpty(dob))
+            Toast.makeText(this, "Please enter birthday", Toast.LENGTH_SHORT).show();
+        else if (pass.compareTo(pass2) != 0)
+            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+        else {
+            auth.createUserWithEmailAndPassword(email, pass)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            if(!task.isSuccessful()){
-                                if(task.getException() instanceof FirebaseAuthUserCollisionException)
-                                    Toast.makeText(getApplicationContext(),"This Email is already registered",Toast.LENGTH_SHORT).show();
+                            if (!task.isSuccessful()) {
+                                if (task.getException() instanceof FirebaseAuthUserCollisionException)
+                                    Toast.makeText(getApplicationContext(), "This Email is already registered", Toast.LENGTH_SHORT).show();
                                 else {
                                     Toast.makeText(getApplicationContext(), "An error occurred", Toast.LENGTH_SHORT).show();
                                     Log.e("error", task.getException().toString());
                                 }
-                            }
-                            else {
+                            } else {
                                 String uid = auth.getCurrentUser().getUid();
                                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(name).build();
                                 auth.getCurrentUser().updateProfile(profileUpdates);
-                                Map<String,Object>user = new HashMap<String,Object>();
-                                user.put("name",name);
-                                user.put("email",email);
-                                user.put("dob",dob);
-                                user.put("interests", Arrays.asList("coffee","movie")); //default interests
+                                Map<String, Object> user = new HashMap<String, Object>();
+                                user.put("name", name);
+                                user.put("email", email);
+                                user.put("dob", dob);
+                                user.put("interests", Arrays.asList("coffee", "movie")); //default interests
                                 db.collection("users").document(uid)
                                         .set(user)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                              @Override
-                                              public void onSuccess(Void aVoid) {
-                                                  Log.d("User write", "DocumentSnapshot successfully written!");
-                                              }
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d("User write", "DocumentSnapshot successfully written!");
+                                            }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
@@ -205,7 +206,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-    public void SignIn(View view){
+
+    public void SignIn(View view) {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }

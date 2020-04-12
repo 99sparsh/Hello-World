@@ -7,7 +7,6 @@ import android.os.Looper;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -122,7 +121,7 @@ public class DashboardActivity extends AppCompatActivity {
         longitude=location.getLongitude();
         loc.put("latitude",location.getLatitude());
         loc.put("longitude",location.getLongitude());
-        loc.put("UpdatedAt",(new Timestamp(date.getTime())).toString());
+        loc.put("UpdatedAt", (new Timestamp(date.getTime())).toString());
         db.collection("users") //update Firestore
                 .document(fUser.getUid())
                 .update("location",loc);

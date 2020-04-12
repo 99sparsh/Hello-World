@@ -11,7 +11,8 @@ import com.example.helloworld.R;
 
 public class PostHolder extends RecyclerView.ViewHolder {
     ImageView dp;
-    TextView title,desc;
+    TextView title, desc;
+
     public PostHolder(@NonNull View itemView) {
         super(itemView);
         this.dp = itemView.findViewById(R.id.dpIV);

@@ -43,20 +43,22 @@ public class LoginActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
     }
+
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         user = auth.getCurrentUser();
-        if(user!=null)
+        if (user != null)
             getFCMTokenAndRedirect();
     }
-    public void login(View view){
+
+    public void login(View view) {
         final String email = emailet.getText().toString();
         final String pass = passet.getText().toString();
-        if(TextUtils.isEmpty(email))
-            Toast.makeText(this,"Please enter email", Toast.LENGTH_SHORT).show();
-        else if(TextUtils.isEmpty(pass))
-            Toast.makeText(this,"Please enter password", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(email))
+            Toast.makeText(this, "Please enter email", Toast.LENGTH_SHORT).show();
+        else if (TextUtils.isEmpty(pass))
+            Toast.makeText(this, "Please enter password", Toast.LENGTH_SHORT).show();
         else {
             auth.signInWithEmailAndPassword(email, pass)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -78,26 +80,28 @@ public class LoginActivity extends AppCompatActivity {
                     });
         }
     }
-    public void navigate_to_signup(View view){
+
+    public void navigate_to_signup(View view) {
         Intent I = new Intent(this, MainActivity.class);
         startActivity(I);
     }
-    public void getFCMTokenAndRedirect(){
+
+    public void getFCMTokenAndRedirect() {
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
                     public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if(!task.isSuccessful()){
-                            Log.w(TAG,task.getException());
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, task.getException());
                             return;
                         }
                         String token = task.getResult().getToken();
                         user = auth.getCurrentUser();
                         db.collection("users")
                                 .document(user.getUid())
-                                .update("FCM_Token",token);
+                                .update("FCM_Token", token);
                     }
                 });
-        startActivity(new Intent(this,DashboardActivity.class));
+        startActivity(new Intent(this, DashboardActivity.class));
     }
 }

@@ -1,4 +1,5 @@
 package helpers;
+
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -6,21 +7,19 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
-
-
 import java.util.Calendar;
 import java.util.TimeZone;
 
-public class MyEditTextDatePicker  implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
+public class MyEditTextDatePicker implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
     private EditText _editText;
     private int _day;
     private int _month;
     private int _birthYear;
     private Context _context;
-    public MyEditTextDatePicker(Context context, int editTextViewID)
-    {
-        Activity act = (Activity)context;
-        this._editText = (EditText)act.findViewById(editTextViewID);
+
+    public MyEditTextDatePicker(Context context, int editTextViewID) {
+        Activity act = (Activity) context;
+        this._editText = (EditText) act.findViewById(editTextViewID);
         this._editText.setOnClickListener(this);
         this._context = context;
 
@@ -33,11 +32,12 @@ public class MyEditTextDatePicker  implements View.OnClickListener, DatePickerDi
         _day = dayOfMonth;
         updateDisplay();
     }
+
     @Override
     public void onClick(View v) {
         Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
 
-        DatePickerDialog dialog = new DatePickerDialog(_context,  this,
+        DatePickerDialog dialog = new DatePickerDialog(_context, this,
                 calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH));
         dialog.show();

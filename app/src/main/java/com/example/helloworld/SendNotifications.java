@@ -16,6 +16,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
+
+import helpers.Coordinates;
 
 public class SendNotifications extends AsyncTask<ArrayList, Void, Void> {
     private final String TAG = "SendNotifications";
@@ -24,6 +27,9 @@ public class SendNotifications extends AsyncTask<ArrayList, Void, Void> {
     protected Void doInBackground(ArrayList... arrayLists) {
         ArrayList postInterests = arrayLists[0];
         final String Name = arrayLists[1].get(0).toString();
+        final String ownToken = arrayLists[1].get(1).toString();
+        final double ownLat = Double.parseDouble(arrayLists[1].get(2).toString());
+        final double ownLon = Double.parseDouble(arrayLists[1].get(3).toString());
         db = FirebaseFirestore.getInstance();
         db.collection("users")
                 .whereArrayContainsAny("interests",postInterests)
@@ -33,13 +39,24 @@ public class SendNotifications extends AsyncTask<ArrayList, Void, Void> {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         ArrayList<String> FCMtokens = new ArrayList<String>();
                         if (task.isSuccessful()) {
+                            Coordinates ob = new Coordinates();
                             for (QueryDocumentSnapshot document : task.getResult()) {
+                                Map<String, Object> details = (Map<String, Object>) document.getData();
+                                if(details.get("location")==null)
+                                    continue;
+                                Map<String,Double> location = (Map<String, Double>) details.get("location");
+                                if(location.get("longitude")==null || location.get("latitude")==null)
+                                    continue;
 
-                                if(document.getData().get("FCM_Token")==null)
+                                if (!ob.checkRange(ownLat, ownLon,  location.get("latitude"), location.get("longitude")))
+                                    continue;
+                                if (details.get("FCM_Token") == null)
                                     continue;
                                 String token = document.getData().get("FCM_Token").toString();
-                                if(!TextUtils.isEmpty(token))
-                                    FCMtokens.add(token);
+                                if (!TextUtils.isEmpty(token))
+                                    if (token.compareTo(ownToken) != 0)
+                                        FCMtokens.add(token);
+                            }
                                 HashMap<String,Object> notif =  new HashMap<String,Object>();
                                 notif.put("tokens",FCMtokens);
                                 notif.put("subtext","New post!");
@@ -51,13 +68,11 @@ public class SendNotifications extends AsyncTask<ArrayList, Void, Void> {
                                 db.collection("notifications")
                                         .document("current")
                                         .update(notif);
-                            }
-                        } else {
+                        }else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
                 });
         return null;
     }
-
 }
