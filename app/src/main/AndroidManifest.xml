@@ -32,6 +32,8 @@
         <activity android:name=".PostsActivity" />
         <activity android:name=".DashboardActivity" />
         <activity android:name=".LoginActivity" />
+        <activity android:name=".FrontActivity"
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

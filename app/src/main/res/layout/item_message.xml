@@ -23,12 +23,13 @@
             android:gravity="center_vertical"
             android:orientation="vertical">
 
+
             <TextView
-                android:id="@+id/messageTextView"
+                android:id="@+id/messengerTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
-                android:textAppearance="?android:attr/textAppearanceLarge"/>
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
 
             <ImageView
                 android:id="@+id/messageImageView"
@@ -39,11 +40,13 @@
                 android:scaleType="fitCenter"/>
 
             <TextView
-                android:id="@+id/messengerTextView"
+                android:id="@+id/messageTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+
         </LinearLayout>
 
     </LinearLayout>
