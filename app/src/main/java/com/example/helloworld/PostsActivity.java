@@ -36,10 +36,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import helpers.Coordinates;
-import helpers.Post;
-import helpers.PostAdapter;
-import helpers.Stemmer;
+import utils.Coordinates;
+import utils.Post;
+import utils.PostAdapter;
+import utils.Stemmer;
 
 public class PostsActivity extends AppCompatActivity {
 

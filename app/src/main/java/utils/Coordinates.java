@@ -1,6 +1,4 @@
-package helpers;
-
-import android.util.Log;
+package utils;
 
 public class Coordinates {
 

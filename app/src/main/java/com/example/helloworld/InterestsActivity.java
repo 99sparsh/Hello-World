@@ -21,7 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
-import helpers.Stemmer;
+import utils.Stemmer;
 
 public class InterestsActivity extends AppCompatActivity {
     private FirebaseFirestore db;

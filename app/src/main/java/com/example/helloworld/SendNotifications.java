@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import helpers.Coordinates;
+import utils.Coordinates;
 
 public class SendNotifications extends AsyncTask<ArrayList, Void, Void> {
     private final String TAG = "SendNotifications";

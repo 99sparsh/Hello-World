@@ -1,4 +1,4 @@
-package helpers;
+package utils;
 
 import android.view.View;
 import android.widget.ImageView;

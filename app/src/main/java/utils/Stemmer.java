@@ -1,4 +1,4 @@
-package helpers;
+package utils;
 
 /**
  * Stemmer, implementing the Porter Stemming Algorithm
